@@ -1,191 +1,46 @@
--- RHTU Hub (Full Version for Delta Mobile)
--- Author: ChatGPT for okebuf
+-- 🌈 RHTU Hub Premium - Mobile Friendly, Tab Buttons One Row
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
+local player = game.Players.LocalPlayer local char = player.Character or player.CharacterAdded:Wait()
 
--- UI Setup
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "RHTU_Hub"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+-- GUI Setup local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui")) gui.Name = "RHTU_HubPremium" gui.ResetOnSpawn = false
 
--- Create Tabs
-local function createTab()
-    local f = Instance.new("Frame")
-    f.Size = UDim2.new(0, 400, 0, 300)
-    f.Position = UDim2.new(0.5, -200, 0.5, -150)
-    f.BackgroundColor3 = Color3.fromRGB(30,30,30)
-    f.BorderSizePixel = 2
-    f.Visible = false
-    f.Active = true
-    f.Draggable = true
-    f.Parent = ScreenGui
-    return f
-end
+-- Toggle Button local toggle = Instance.new("TextButton", gui) toggle.Size = UDim2.new(0, 50, 0, 30) toggle.Position = UDim2.new(1, -60, 1, -60) toggle.Text = "👁️" toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0) toggle.TextColor3 = Color3.new(1, 1, 1) Instance.new("UICorner", toggle).CornerRadius = UDim.new(0, 6)
 
-local MainTab = createTab()
-local VisualTab = createTab()
-local CombatTab = createTab()
+-- Main Frame local frame = Instance.new("Frame", gui) frame.Size = UDim2.new(0, 350, 0, 300) frame.Position = UDim2.new(0.5, -175, 0.5, -150) frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) frame.Visible = true frame.Active = true frame.Draggable = true Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 
--- Rainbow border update
-local function addRainbow(f)
-    local hue = 0
-    RunService.RenderStepped:Connect(function()
-        hue = (hue+0.005)%1
-        f.BorderColor3 = Color3.fromHSV(hue,1,1)
-    end)
-end
-addRainbow(MainTab); addRainbow(VisualTab); addRainbow(CombatTab)
+-- Rainbow Title local title = Instance.new("TextLabel", frame) title.Size = UDim2.new(1, 0, 0, 25) title.BackgroundTransparency = 1 title.Text = "🌈 RHTU Hub Premium v1.4" title.Font = Enum.Font.GothamBold title.TextSize = 16 title.TextColor3 = Color3.new(1, 0, 0)
 
--- Tab buttons
+-- Rainbow Effect spawn(function() while true do for i = 0, 1, 0.01 do title.TextColor3 = Color3.fromHSV(i, 1, 1) task.wait(0.03) end end end)
+
+-- Tab Buttons in One Horizontal Row local tabNames = {"Combat", "Tính năng", "Player"} local tabs = {} local contents = {}
+
+for i, name in ipairs(tabNames) do local btn = Instance.new("TextButton") btn.Name = name btn.Size = UDim2.new(0, 100, 0, 25) btn.Position = UDim2.new(0, 10 + (i - 1) * 110, 0, 30) btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) btn.TextColor3 = Color3.new(1, 1, 1) btn.Text = name btn.Parent = frame Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6) tabs[name] = btn
+
 local tabFrame = Instance.new("Frame")
-tabFrame.Size = UDim2.new(0, 400, 0, 30)
-tabFrame.Position = UDim2.new(0.5, -200, 0.5, -180)
-tabFrame.BackgroundColor3 = Color3.fromRGB(10,10,10)
-tabFrame.Parent = ScreenGui
+tabFrame.Size = UDim2.new(1, -20, 1, -70)
+tabFrame.Position = UDim2.new(0, 10, 0, 60)
+tabFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", tabFrame).CornerRadius = UDim.new(0, 6)
+tabFrame.Visible = (i == 1)
+tabFrame.Parent = frame
+contents[name] = tabFrame
 
-local function tabButton(txt, icon, tab, x)
-    local b = Instance.new("TextButton")
-    b.Size = UDim2.new(0,130,0,30)
-    b.Position = UDim2.new(0, x, 0, 0)
-    b.Text = icon.." "..txt
-    b.BackgroundColor3 = Color3.fromRGB(50,50,50)
-    b.TextColor3 = Color3.new(1,1,1)
-    b.Parent = tabFrame
-    b.MouseButton1Click:Connect(function()
-        MainTab.Visible = false
-        VisualTab.Visible = false
-        CombatTab.Visible = false
-        tab.Visible = true
-    end)
+btn.MouseButton1Click:Connect(function()
+	for _, c in pairs(contents) do c.Visible = false end
+	contents[name].Visible = true
+end)
+
 end
 
-tabButton("Main","⚙️",MainTab,10)
-tabButton("Visual","👁️",VisualTab,140)
-tabButton("Combat","🎯",CombatTab,270)
+-- Create Buttons in Tabs local function createButton(tab, text, posY, callback) local b = Instance.new("TextButton") b.Size = UDim2.new(0, 300, 0, 30) b.Position = UDim2.new(0, 10, 0, posY) b.Text = text b.BackgroundColor3 = Color3.fromRGB(70, 70, 70) b.TextColor3 = Color3.new(1, 1, 1) Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6) b.Parent = tab b.MouseButton1Click:Connect(callback) end
 
--- Toggle GUI
-local tog = Instance.new("TextButton")
-tog.Text = "🌈"
-tog.Size = UDim2.new(0,40,0,40)
-tog.Position = UDim2.new(1,-50,1,-50)
-tog.BackgroundColor3 = Color3.fromRGB(0,0,0)
-tog.TextColor3 = Color3.new(1,1,1)
-tog.Parent = ScreenGui
+-- Combat tab buttons createButton(contents["Combat"], "Aimbot (Player gần nhất)", 10, function() -- Aimbot code end) createButton(contents["Combat"], "ESP Toggle", 50, function() -- ESP code end)
 
-local show = true
-tog.MouseButton1Click:Connect(function()
-    show = not show
-    tabFrame.Visible = show
-    MainTab.Visible = show
-    -- optionally hide others
-    if not show then VisualTab.Visible = false; CombatTab.Visible = false end
-end)
+-- Tính năng tab buttons createButton(contents["Tính năng"], "AntiStun", 10, function() local s = char:FindFirstChild("Stunned") if s then s:Destroy() end end) createButton(contents["Tính năng"], "AntiVoid", 50, function() local root = char:WaitForChild("HumanoidRootPart") root:GetPropertyChangedSignal("Position"):Connect(function() if root.Position.Y < -20 then root.CFrame = CFrame.new(0, 50, 0) end end) end) createButton(contents["Tính năng"], "AntiSit", 90, function() char.Humanoid.Sit = false char.Humanoid:GetPropertyChangedSignal("Sit"):Connect(function() char.Humanoid.Sit = false end) end) createButton(contents["Tính năng"], "Tăng độ nhảy 1 lần", 130, function() local h = char:FindFirstChild("Humanoid") if h then local original = h.JumpPower h.JumpPower = 150 h:ChangeState(Enum.HumanoidStateType.Jumping) task.delay(1, function() h.JumpPower = original end) end end) createButton(contents["Tính năng"], "NoFog", 170, function() for _, v in pairs(game.Lighting:GetDescendants()) do if v:IsA("PostEffect") or v:IsA("Atmosphere") then v:Destroy() end end end)
 
--- Helper UI functions
-local function addTextBox(parent, place, pos, callback)
-    local tb = Instance.new("TextBox")
-    tb.PlaceholderText=place
-    tb.Size=UDim2.new(0,180,0,30)
-    tb.Position=pos
-    tb.BackgroundColor3=Color3.fromRGB(40,40,40)
-    tb.TextColor3=Color3.new(1,1,1)
-    tb.Parent=parent
-    tb.FocusLost:Connect(function()
-        callback(tonumber(tb.Text))
-    end)
-    return tb
-end
+-- Player tab placeholder createButton(contents["Player"], "Chức năng cũ ở đây", 10, function() -- Placeholder end)
 
-local function addButton(parent, icon, pos, cb)
-    local b = Instance.new("TextButton")
-    b.Size=UDim2.new(0,120,0,30)
-    b.Position=pos
-    b.BackgroundColor3=Color3.fromRGB(60,60,60)
-    b.TextColor3=Color3.new(1,1,1)
-    b.Text = icon
-    b.Parent = parent
-    b.MouseButton1Click:Connect(cb)
-end
+-- Toggle GUI visibility toggle.MouseButton1Click:Connect(function() frame.Visible = not frame.Visible end)
 
--- Main tab
-addTextBox(MainTab,"WalkSpeed 1-100",UDim2.new(0,10,0,10),function(v)
-    if v then LocalPlayer.Character.Humanoid.WalkSpeed=math.clamp(v,1,100) end
-end)
-local fly = false; local flyspd=5
-addTextBox(MainTab,"Fly Speed 1-10",UDim2.new(0,210,0,10),function(v)
-    flyspd=math.clamp(v or 5,1,10)
-end)
-addButton(MainTab,"🛸 Fly",UDim2.new(0,10,0,50),function() fly = not fly end)
-RunService.RenderStepped:Connect(function()
-    if fly and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        LocalPlayer.Character:Move(Vector3.new(0, flyspd, 0))
-    end
-end)
-addButton(MainTab,"🚫 Noclip",UDim2.new(0,140,0,50),function()
-    for _,p in pairs(LocalPlayer.Character:GetDescendants()) do
-        if p:IsA("BasePart") then p.CanCollide=false end
-    end
-end)
+title.Parent = frame
 
--- Visual tab
-addButton(VisualTab,"👁️ ESP",UDim2.new(0,10,0,10),function()
-    for _,p in pairs(Players:GetPlayers()) do
-        if p~=LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
-            local bb = Instance.new("BillboardGui",p.Character.Head)
-            bb.Size=UDim2.new(0,100,0,40)
-            bb.AlwaysOnTop=true
-            local tl=Instance.new("TextLabel",bb)
-            tl.Size=UDim2.new(1,0,1,0)
-            tl.BackgroundTransparency=1
-            tl.TextColor3=Color3.new(1,1,1)
-            tl.TextScaled=true
-            tl.Text=p.Name
-        end
-    end
-end)
-addButton(VisualTab,"FOV 120",UDim2.new(0,10,0,50),function()
-    workspace.CurrentCamera.FieldOfView=120
-end)
-addButton(VisualTab,"FOV 60",UDim2.new(0,140,0,50),function()
-    workspace.CurrentCamera.FieldOfView=60
-end)
-
--- Combat tab
-local target=""
-addTextBox(CombatTab,"Target",UDim2.new(0,10,0,10),function(v) target=Users end)
-addButton(CombatTab,"🎯 Aimbot",UDim2.new(0,210,0,10),function()
-    RunService.RenderStepped:Connect(function()
-        local t=Players:FindFirstChild(target)
-        if t and t.Character and t.Character:FindFirstChild("Head") then
-            workspace.CurrentCamera.CFrame=CFrame.new(workspace.CurrentCamera.CFrame.Position, t.Character.Head.Position)
-        end
-    end)
-end)
-addButton(CombatTab,"🛸 Follow",UDim2.new(0,10,0,50),function()
-    RunService.RenderStepped:Connect(function()
-        local t=Players:FindFirstChild(target)
-        if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
-            LocalPlayer.Character:MoveTo( t.Character.HumanoidRootPart.Position )
-        end
-    end)
-end)
-addTextBox(CombatTab,"Hitbox 1-100",UDim2.new(0,10,0,90),function(v)
-    if v then
-        for _,p in pairs(Players:GetPlayers()) do
-            if p~=LocalPlayer and p.Character then
-                for _,c in pairs(p.Character:GetDescendants()) do
-                    if c:IsA("BasePart") then
-                        c.Size=Vector3.new(v,v,v)
-                    end
-                end
-            end
-        end
-    end
-end)
-
--- AntiKick hook
-local old = game.GetService(game, "Players")
--- no hook but placeholder (real hook requires exploit context)
